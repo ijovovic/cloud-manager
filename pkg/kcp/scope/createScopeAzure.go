@@ -5,6 +5,7 @@ import (
 	"errors"
 	cloudcontrolv1beta1 "github.com/kyma-project/cloud-manager/api/cloud-control/v1beta1"
 	"github.com/kyma-project/cloud-manager/pkg/composed"
+	"k8s.io/utils/ptr"
 )
 
 func createScopeAzure(ctx context.Context, st composed.State) (error, context.Context) {
@@ -33,6 +34,11 @@ func createScopeAzure(ctx context.Context, st composed.State) (error, context.Co
 					TenantId:       tenantID,
 					SubscriptionId: subscriptionID,
 					VpcNetwork:     commonVpcName(state.shootNamespace, state.shootName),
+					Network: cloudcontrolv1beta1.AzureNetwork{
+						Nodes:    ptr.Deref(state.shoot.Spec.Networking.Nodes, ""),
+						Pods:     ptr.Deref(state.shoot.Spec.Networking.Pods, ""),
+						Services: ptr.Deref(state.shoot.Spec.Networking.Services, ""),
+					},
 				},
 			},
 		},
