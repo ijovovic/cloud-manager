@@ -87,6 +87,7 @@ var _ = BeforeSuite(func() {
 	Expect(SetupIpRangeReconciler(
 		infra.KcpManager(),
 		infra.AwsMock().IpRangeSkrProvider(),
+		nil,
 		infra.GcpMock().ServiceNetworkingClientProvider(),
 		infra.GcpMock().ComputeClientProvider(),
 		env,

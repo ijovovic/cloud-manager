@@ -18,6 +18,7 @@ package main
 
 import (
 	"flag"
+	azureiprangeclient "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/iprange/client"
 	"os"
 
 	cceeconfig "github.com/kyma-project/cloud-manager/pkg/kcp/provider/ccee/config"
@@ -270,6 +271,7 @@ func main() {
 	if err = cloudcontrolcontroller.SetupIpRangeReconciler(
 		mgr,
 		awsiprangeclient.NewClientProvider(),
+		azureiprangeclient.NewClientProvider(),
 		gcpiprangeclient.NewServiceNetworkingClient(),
 		gcpiprangeclient.NewComputeClient(),
 		env,

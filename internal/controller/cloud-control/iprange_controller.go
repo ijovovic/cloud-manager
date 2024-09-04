@@ -25,8 +25,10 @@ import (
 	"github.com/kyma-project/cloud-manager/pkg/kcp/iprange"
 	awsclient "github.com/kyma-project/cloud-manager/pkg/kcp/provider/aws/client"
 	awsiprange "github.com/kyma-project/cloud-manager/pkg/kcp/provider/aws/iprange"
-	iprangeclient "github.com/kyma-project/cloud-manager/pkg/kcp/provider/aws/iprange/client"
+	awsiprangeclient "github.com/kyma-project/cloud-manager/pkg/kcp/provider/aws/iprange/client"
+	azureclient "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/client"
 	azureiprange "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/iprange"
+	azureiprangeclient "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/iprange/client"
 	gcpclient "github.com/kyma-project/cloud-manager/pkg/kcp/provider/gcp/client"
 	gcpiprange "github.com/kyma-project/cloud-manager/pkg/kcp/provider/gcp/iprange"
 	"github.com/kyma-project/cloud-manager/pkg/kcp/provider/gcp/iprange/client"
@@ -36,7 +38,8 @@ import (
 
 func SetupIpRangeReconciler(
 	kcpManager manager.Manager,
-	awsProvider awsclient.SkrClientProvider[iprangeclient.Client],
+	awsProvider awsclient.SkrClientProvider[awsiprangeclient.Client],
+	azureProvider azureclient.SkrClientProvider[azureiprangeclient.Client],
 	gcpSvcNetProvider gcpclient.ClientProvider[client.ServiceNetworkingClient],
 	gcpComputeProvider gcpclient.ClientProvider[client.ComputeClient],
 	env abstractions.Environment,
@@ -49,7 +52,7 @@ func SetupIpRangeReconciler(
 			composed.NewStateFactory(composed.NewStateClusterFromCluster(kcpManager)),
 			focal.NewStateFactory(),
 			awsiprange.NewStateFactory(awsProvider),
-			azureiprange.NewStateFactory(nil),
+			azureiprange.NewStateFactory(azureProvider),
 			gcpiprange.NewStateFactory(gcpSvcNetProvider, gcpComputeProvider, env),
 		),
 	).SetupWithManager(kcpManager)

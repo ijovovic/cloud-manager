@@ -34,7 +34,7 @@ func modifyRedis(ctx context.Context, st composed.State) (error, context.Context
 		return nil, nil
 	}
 
-	resourceGroupName := azureUtil.GetResourceGroupName("redis", state.ObjAsRedisInstance().Name)
+	resourceGroupName := azureUtil.GetPredictableResourceName("redis", state.ObjAsRedisInstance().Name)
 	logger.Info("Detected modified Redis configuration")
 	error := state.client.UpdateRedisInstance(
 		ctx,

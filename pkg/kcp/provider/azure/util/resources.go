@@ -84,6 +84,6 @@ func VirtualNetworkResourceId(subscription, resourceGroup, virtualNetworkName st
 	})
 }
 
-func GetResourceGroupName(resourceKindName, resourceInstanceName string) string {
+func GetPredictableResourceName(resourceKindName, resourceInstanceName string) string {
 	return "cm-" + resourceKindName + "-" + resourceInstanceName
 }

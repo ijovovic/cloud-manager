@@ -102,7 +102,7 @@ var _ = Describe("Feature: KCP RedisInstance", func() {
 		})
 
 		By("And When Azure Redis state is deleted", func() {
-			rgName := azureUtil.GetResourceGroupName("redis", redisInstance.Name)
+			rgName := azureUtil.GetPredictableResourceName("redis", redisInstance.Name)
 			infra.AzureMock().DeleteRedisCacheByResourceGroupName(rgName)
 		})
 

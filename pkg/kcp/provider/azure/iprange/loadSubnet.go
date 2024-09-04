@@ -1,4 +1,4 @@
-package redisinstance
+package iprange
 
 import (
 	"context"
@@ -12,35 +12,36 @@ import (
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func loadResourceGroup(ctx context.Context, st composed.State) (error, context.Context) {
+func loadSubnet(ctx context.Context, st composed.State) (error, context.Context) {
 	state := st.(*State)
 	logger := composed.LoggerFromCtx(ctx)
 
-	if state.resourceGroup != nil {
-		logger.Info("Azure Redis resourceGroupName already loaded")
+	if state.vpc != nil {
+		logger.Info("Azure ipRange vpcName already loaded")
 		return nil, nil
 	}
 
-	logger.Info("Loading Azure Redis resourceGroupName")
+	logger.Info("Loading Azure ipRange vpcName")
 
-	resourceGroupName := azureUtil.GetPredictableResourceName("redis", state.ObjAsRedisInstance().Name)
-	resourceGroupsClientGetResponse, error := state.client.GetResourceGroup(ctx, resourceGroupName)
+	virtualNetworkName := azureUtil.GetPredictableResourceName("vpc", string(state.ObjAsIpRange().GetUID()))
+	resourceGroupName := azureUtil.GetPredictableResourceName("iprange", string(state.ObjAsIpRange().GetUID()))
+	virtualNetworksClientGetResponse, error := state.client.GetVpc(ctx, resourceGroupName, virtualNetworkName)
 	if error != nil {
 		if azuremeta.IsNotFound(error) {
 			return nil, nil
 		}
 
 		logger.Error(error, "Error loading Azure resource group")
-		meta.SetStatusCondition(state.ObjAsRedisInstance().Conditions(), metav1.Condition{
+		meta.SetStatusCondition(state.ObjAsIpRange().Conditions(), metav1.Condition{
 			Type:    v1beta1.ConditionTypeError,
 			Status:  "True",
-			Reason:  v1beta1.ReasonCanNotLoadResourceGroup,
-			Message: fmt.Sprintf("Failed loading AzureRedis resource group: %s", error),
+			Reason:  v1beta1.ConditionTypeError,
+			Message: fmt.Sprintf("Failed loading Azureiprange vpc: %s", error),
 		})
 		error = state.UpdateObjStatus(ctx)
 		if error != nil {
 			return composed.LogErrorAndReturn(error,
-				"Error updating RedisInstance status due failed azure redis resource group loading",
+				"Error updating ipRange status due failed azure ip range vpc loading",
 				composed.StopWithRequeueDelay(util.Timing.T10000ms()),
 				ctx,
 			)
@@ -49,7 +50,7 @@ func loadResourceGroup(ctx context.Context, st composed.State) (error, context.C
 		return composed.StopWithRequeueDelay(util.Timing.T60000ms()), nil
 	}
 
-	state.resourceGroup = &resourceGroupsClientGetResponse.ResourceGroup
+	state.vpc = &virtualNetworksClientGetResponse.VirtualNetwork
 
 	return nil, nil
 }

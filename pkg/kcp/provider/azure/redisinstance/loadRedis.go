@@ -29,7 +29,7 @@ func loadRedis(ctx context.Context, st composed.State) (error, context.Context) 
 	logger.Info("Loading Azure Redis")
 
 	redisInstanceName := state.ObjAsRedisInstance().Name
-	resourceGroupName := azureUtil.GetResourceGroupName("redis", state.ObjAsRedisInstance().Name)
+	resourceGroupName := azureUtil.GetPredictableResourceName("redis", state.ObjAsRedisInstance().Name)
 
 	redisInstance, error := state.client.GetRedisInstance(ctx, resourceGroupName, redisInstanceName)
 	if error != nil {

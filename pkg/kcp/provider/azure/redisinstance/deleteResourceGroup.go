@@ -31,7 +31,7 @@ func deleteResourceGroup(ctx context.Context, st composed.State) (error, context
 
 	logger.Info("Deleting Azure Redis resourceGroup")
 
-	resourceGroupName := azureUtil.GetResourceGroupName("redis", state.ObjAsRedisInstance().Name)
+	resourceGroupName := azureUtil.GetPredictableResourceName("redis", state.ObjAsRedisInstance().Name)
 
 	error := state.client.DeleteResourceGroup(ctx, resourceGroupName)
 	if error != nil {

@@ -1,4 +1,4 @@
-package redisinstance
+package iprange
 
 import (
 	"context"
@@ -20,9 +20,9 @@ func createResourceGroup(ctx context.Context, st composed.State) (error, context
 		return nil, nil
 	}
 
-	logger.Info("Creating Azure Redis resourceGroup")
+	logger.Info("Creating Azure iprange resourceGroup")
 
-	resourceGroupName := azureUtil.GetPredictableResourceName("redis", state.ObjAsRedisInstance().Name)
+	resourceGroupName := azureUtil.GetPredictableResourceName("iprange", string(state.ObjAsIpRange().GetUID()))
 	location := state.Scope().Spec.Region
 
 	error := state.client.CreateResourceGroup(ctx, resourceGroupName, location)
@@ -32,16 +32,16 @@ func createResourceGroup(ctx context.Context, st composed.State) (error, context
 		}
 
 		logger.Error(error, "Error crating Azure resource group")
-		meta.SetStatusCondition(state.ObjAsRedisInstance().Conditions(), metav1.Condition{
+		meta.SetStatusCondition(state.ObjAsIpRange().Conditions(), metav1.Condition{
 			Type:    v1beta1.ConditionTypeError,
 			Status:  "True",
 			Reason:  v1beta1.ReasonCanNotCreateResourceGroup,
-			Message: fmt.Sprintf("Failed creating AzureRedis resource group: %s", error),
+			Message: fmt.Sprintf("Failed creating Azure iprange resource group: %s", error),
 		})
 		error = state.UpdateObjStatus(ctx)
 		if error != nil {
 			return composed.LogErrorAndReturn(error,
-				"Error updating RedisInstance status due failed azure redis resource group create",
+				"Error updating iprange status due failed azure iprange resource group create",
 				composed.StopWithRequeueDelay(util.Timing.T10000ms()),
 				ctx,
 			)
@@ -49,6 +49,6 @@ func createResourceGroup(ctx context.Context, st composed.State) (error, context
 
 		return composed.StopWithRequeueDelay(util.Timing.T60000ms()), nil
 	}
-	// we have just created the group, requeue so the Redis can be loaded
+	// we have just created the group, requeue so the resource group can be loaded
 	return composed.StopWithRequeueDelay(util.Timing.T60000ms()), nil
 }
