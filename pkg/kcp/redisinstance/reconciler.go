@@ -58,6 +58,7 @@ func (r *redisInstanceReconciler) newAction() composed.Action {
 		func(ctx context.Context, st composed.State) (error, context.Context) {
 			return composed.ComposeActions(
 				"redisInstanceCommon",
+				loadIpRange,
 				composed.BuildSwitchAction(
 					"providerSwitch",
 					nil,
