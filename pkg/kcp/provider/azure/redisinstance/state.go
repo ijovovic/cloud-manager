@@ -2,6 +2,8 @@ package redisinstance
 
 import (
 	"context"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v5"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/privatedns/armprivatedns"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/redis/armredis"
 	"github.com/go-logr/logr"
 	azureclient "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/client"
@@ -21,9 +23,12 @@ type State struct {
 	subscriptionId string
 	tenantId       string
 
-	resourceGroupName string
-
-	azureRedisInstance *armredis.ResourceInfo
+	resourceGroupName   string
+	privateEndPoint     *armnetwork.PrivateEndpoint
+	privateDnsZone      *armprivatedns.PrivateZone
+	virtualNetworkLink  *armprivatedns.VirtualNetworkLink
+	privateDnsZoneGroup *armnetwork.PrivateDNSZoneGroup
+	azureRedisInstance  *armredis.ResourceInfo
 }
 
 type StateFactory interface {

@@ -3,6 +3,8 @@ package client
 import (
 	"context"
 	"github.com/Azure/azure-sdk-for-go/sdk/azidentity"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v5"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/privatedns/armprivatedns"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/redis/armredis"
 	azureclient "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/client"
 )
@@ -25,7 +27,33 @@ func NewClientProvider() azureclient.ClientProvider[Client] {
 			return nil, err
 		}
 
-		return newClient(azureclient.NewRedisClient(armRedisClientInstance)), nil
+		privateEndpointClientInstance, err := armnetwork.NewPrivateEndpointsClient(subscriptionId, cred, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		privateDnsZoneGroupClientInstance, err := armnetwork.NewPrivateDNSZoneGroupsClient(subscriptionId, cred, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		privateDnsZoneClientInstance, err := armprivatedns.NewPrivateZonesClient(subscriptionId, cred, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		virtualNetworkLinkClientInstance, err := armprivatedns.NewVirtualNetworkLinksClient(subscriptionId, cred, nil)
+		if err != nil {
+			return nil, err
+		}
+
+		return newClient(
+			azureclient.NewRedisClient(
+				armRedisClientInstance,
+				privateEndpointClientInstance,
+				privateDnsZoneGroupClientInstance,
+				privateDnsZoneClientInstance,
+				virtualNetworkLinkClientInstance)), nil
 	}
 }
 

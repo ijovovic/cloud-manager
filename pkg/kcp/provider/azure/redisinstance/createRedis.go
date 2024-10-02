@@ -62,7 +62,8 @@ func getCreateParams(state *State) armredis.CreateParameters {
 			Capacity: to.Ptr[int32](int32(state.ObjAsRedisInstance().Spec.Instance.Azure.SKU.Capacity)),
 			Family:   to.Ptr(armredis.SKUFamilyP),
 		},
-		RedisConfiguration: state.ObjAsRedisInstance().Spec.Instance.Azure.RedisConfiguration.GetRedisConfig(),
+		RedisConfiguration:  state.ObjAsRedisInstance().Spec.Instance.Azure.RedisConfiguration.GetRedisConfig(),
+		PublicNetworkAccess: to.Ptr(armredis.PublicNetworkAccessDisabled),
 	}
 
 	if state.ObjAsRedisInstance().Spec.Instance.Azure.ShardCount != 0 {

@@ -3,6 +3,8 @@ package mock
 import (
 	"context"
 	"fmt"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/network/armnetwork/v5"
+	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/privatedns/armprivatedns"
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/redis/armredis"
 	"github.com/google/uuid"
 	"github.com/imdario/mergo"
@@ -235,4 +237,36 @@ func (s *redisStore) GetRedisInstanceAccessKeys(ctx context.Context, resourceGro
 	}
 
 	return []string{ptr.Deref(info.accessKeys.PrimaryKey, ""), ptr.Deref(info.accessKeys.SecondaryKey, "")}, nil
+}
+
+func (s *redisStore) CreatePrivateEndPoint(ctx context.Context, resourceGroupName, privateEndPointName string, parameters armnetwork.PrivateEndpoint) error {
+	return nil
+}
+
+func (s *redisStore) CreatePrivateDnsZoneGroup(ctx context.Context, resourceGroupName, privateEndPointName, privateDnsZoneGroupName string, parameters armnetwork.PrivateDNSZoneGroup) error {
+	return nil
+}
+
+func (c *redisStore) GetPrivateEndPoint(ctx context.Context, resourceGroupName, privateEndPointName string) (*armnetwork.PrivateEndpoint, error) {
+	return nil, nil
+}
+
+func (c *redisStore) GetPrivateDnsZoneGroup(ctx context.Context, resourceGroupName, privateEndPointName, privateDnsZoneGroupName string) (*armnetwork.PrivateDNSZoneGroup, error) {
+	return nil, nil
+}
+
+func (s *redisStore) CreatePrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneName string, parameters armprivatedns.PrivateZone) error {
+	return nil
+}
+
+func (c *redisStore) GetPrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneName string) (*armprivatedns.PrivateZone, error) {
+	return nil, nil
+}
+
+func (s *redisStore) CreateVirtualNetworkLink(ctx context.Context, resourceGroupName, privateZoneName, virtualNetworkLinkName string, parameters armprivatedns.VirtualNetworkLink) error {
+	return nil
+}
+
+func (s *redisStore) GetVirtualNetworkLink(ctx context.Context, resourceGroupName, privateZoneName, virtualNetworkLinkName string) (*armprivatedns.VirtualNetworkLink, error) {
+	return nil, nil
 }
