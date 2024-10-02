@@ -16,7 +16,9 @@ type RedisClient interface {
 	GetRedisInstanceAccessKeys(ctx context.Context, resourceGroupName, redisInstanceName string) ([]string, error)
 	CreatePrivateEndPoint(ctx context.Context, resourceGroupName, privateEndPointName string, parameters armnetwork.PrivateEndpoint) error
 	GetPrivateEndPoint(ctx context.Context, resourceGroupName, privateEndPointName string) (*armnetwork.PrivateEndpoint, error)
+	DeletePrivateEndPoint(ctx context.Context, resourceGroupName, privateEndPointName string) error
 	CreatePrivateDnsZoneGroup(ctx context.Context, resourceGroupName, privateEndPointName, privateDnsZoneGroupName string, parameters armnetwork.PrivateDNSZoneGroup) error
+	DeletePrivateDnsZoneGroup(ctx context.Context, resourceGroupName, privateEndPointName, privateDnsZoneGroupName string) error
 	GetPrivateDnsZoneGroup(ctx context.Context, resourceGroupName, privateEndPointName, privateDnsZoneGroupName string) (*armnetwork.PrivateDNSZoneGroup, error)
 	CreatePrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneName string, parameters armprivatedns.PrivateZone) error
 	GetPrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneGroupName string) (*armprivatedns.PrivateZone, error)
@@ -126,6 +128,19 @@ func (c *redisClient) GetPrivateEndPoint(ctx context.Context, resourceGroupName,
 	return &privateEndpointsClientGetResponse.PrivateEndpoint, nil
 }
 
+func (c *redisClient) DeletePrivateEndPoint(ctx context.Context, resourceGroupName, privateEndPointName string) error {
+	_, err := c.pepClient.BeginDelete(
+		ctx,
+		resourceGroupName,
+		privateEndPointName,
+		nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *redisClient) CreatePrivateDnsZoneGroup(ctx context.Context, resourceGroupName, privateEndPointName, privateDnsZoneGroupName string, parameters armnetwork.PrivateDNSZoneGroup) error {
 	_, err := c.dnsZoneGroupClient.BeginCreateOrUpdate(
 		ctx,
@@ -153,6 +168,20 @@ func (c *redisClient) GetPrivateDnsZoneGroup(ctx context.Context, resourceGroupN
 	}
 
 	return &privateDnsZoneGroupClientGetResponse.PrivateDNSZoneGroup, nil
+}
+
+func (c *redisClient) DeletePrivateDnsZoneGroup(ctx context.Context, resourceGroupName, privateEndPointName, privateDnsZoneGroupName string) error {
+	_, err := c.dnsZoneGroupClient.BeginDelete(
+		ctx,
+		resourceGroupName,
+		privateEndPointName,
+		privateDnsZoneGroupName,
+		nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (c *redisClient) CreatePrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneName string, parameters armprivatedns.PrivateZone) error {

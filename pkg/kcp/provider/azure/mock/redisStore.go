@@ -270,3 +270,11 @@ func (s *redisStore) CreateVirtualNetworkLink(ctx context.Context, resourceGroup
 func (s *redisStore) GetVirtualNetworkLink(ctx context.Context, resourceGroupName, privateZoneName, virtualNetworkLinkName string) (*armprivatedns.VirtualNetworkLink, error) {
 	return nil, nil
 }
+
+func (s *redisStore) DeletePrivateDnsZoneGroup(ctx context.Context, resourceGroupName, privateEndPointName, privateDnsZoneGroupName string) error {
+	return nil
+}
+
+func (s *redisStore) DeletePrivateEndPoint(ctx context.Context, resourceGroupName, privateEndPointName string) error {
+	return nil
+}
