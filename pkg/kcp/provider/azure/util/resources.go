@@ -225,3 +225,12 @@ func NewPrivateDnsZoneGroupResourceId(subscription, resourceGroup, privateDnsZon
 		valid:         len(subscription) > 0 && len(resourceGroup) > 0 && len(privateDnsZoneInstanceName) > 0,
 	}
 }
+
+func GetDefaultPrivateDnsZoneName() string {
+	// https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns#databases
+	return "privatelink.redis.cache.windows.net"
+}
+
+func GetDefaultVirtualNetworkLinkName() string {
+	return "kyma-network-link"
+}

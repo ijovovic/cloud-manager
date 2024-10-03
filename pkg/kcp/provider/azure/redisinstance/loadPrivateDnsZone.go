@@ -6,6 +6,7 @@ import (
 	"github.com/kyma-project/cloud-manager/api/cloud-control/v1beta1"
 	"github.com/kyma-project/cloud-manager/pkg/composed"
 	azuremeta "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/meta"
+	azureutil "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/util"
 	"github.com/kyma-project/cloud-manager/pkg/util"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,8 +24,7 @@ func loadPrivateDnsZone(ctx context.Context, st composed.State) (error, context.
 	logger.Info("Loading Azure Private DnsZone")
 
 	resourceGroupName := state.resourceGroupName
-	// https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns#databases
-	privateDnsZoneName := "privatelink.redis.cache.windows.net"
+	privateDnsZoneName := azureutil.GetDefaultPrivateDnsZoneName()
 
 	privateDnsZoneInstance, err := state.client.GetPrivateDnsZone(ctx, resourceGroupName, privateDnsZoneName)
 	if err != nil {

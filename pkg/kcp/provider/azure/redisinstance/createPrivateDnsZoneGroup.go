@@ -30,7 +30,7 @@ func createPrivateDnsZoneGroup(ctx context.Context, st composed.State) (error, c
 	resourceGroupName := state.resourceGroupName
 	privateDnsZoneGroupName := state.ObjAsRedisInstance().Name
 	privateEndPointName := ptr.Deref(state.privateEndPoint.Name, "")
-	privateDnsZoneInstanceName := "privatelink.redis.cache.windows.net"
+	privateDnsZoneInstanceName := azureutil.GetDefaultPrivateDnsZoneName()
 	subscriptionId := state.Scope().Spec.Scope.Azure.SubscriptionId
 
 	privateDNSZoneGroup := armnetwork.PrivateDNSZoneGroup{

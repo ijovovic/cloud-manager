@@ -6,45 +6,47 @@ import (
 	"github.com/kyma-project/cloud-manager/api/cloud-control/v1beta1"
 	"github.com/kyma-project/cloud-manager/pkg/composed"
 	azureMeta "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/meta"
+	azureutil "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/util"
 	"github.com/kyma-project/cloud-manager/pkg/util"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 )
 
-func deletePrivateEndPoint(ctx context.Context, st composed.State) (error, context.Context) {
+func deleteVirtualNetworkLink(ctx context.Context, st composed.State) (error, context.Context) {
 	state := st.(*State)
 	logger := composed.LoggerFromCtx(ctx)
 
-	if state.privateEndPoint == nil {
+	if state.virtualNetworkLink == nil {
 		return nil, nil
 	}
 
-	if *state.privateEndPoint.Properties.ProvisioningState == "Deleting" {
+	if *state.virtualNetworkLink.Properties.ProvisioningState == "Deleting" {
 		return nil, nil
 	}
 
-	logger.Info("Deleting Azure PrivateEndPoint")
+	logger.Info("Deleting Azure VirtualNetworkLink")
 
-	privateEndPointName := state.ObjAsRedisInstance().Name
 	resourceGroupName := state.resourceGroupName
+	privateDnsZoneName := azureutil.GetDefaultPrivateDnsZoneName()
+	virtualNetworkLinkname := azureutil.GetDefaultVirtualNetworkLinkName()
 
-	err := state.client.DeletePrivateEndPoint(ctx, resourceGroupName, privateEndPointName)
+	err := state.client.DeleteVirtualNetworkLink(ctx, resourceGroupName, privateDnsZoneName, virtualNetworkLinkname)
 	if err != nil {
 		if azureMeta.IsNotFound(err) {
 			return nil, nil
 		}
 
-		logger.Error(err, "Error deleting Azure PrivateEndPoint")
+		logger.Error(err, "Error deleting Azure VirtualNetworkLink")
 		meta.SetStatusCondition(state.ObjAsRedisInstance().Conditions(), metav1.Condition{
 			Type:    v1beta1.ConditionTypeError,
 			Status:  "True",
-			Reason:  v1beta1.ReasonFailedCreatingFileSystem,
-			Message: fmt.Sprintf("Failed deleting AzureRedis: %s", err),
+			Reason:  v1beta1.ConditionTypeError,
+			Message: fmt.Sprintf("Failed deleting Azure VirtualNetworkLink: %s", err),
 		})
 		err = state.UpdateObjStatus(ctx)
 		if err != nil {
 			return composed.LogErrorAndReturn(err,
-				"Error updating RedisInstance status due failed azure PrivateEndPoint deleting",
+				"Error updating RedisInstance status due failed azure VirtualNetworkLink deleting",
 				composed.StopWithRequeueDelay((util.Timing.T10000ms())),
 				ctx,
 			)

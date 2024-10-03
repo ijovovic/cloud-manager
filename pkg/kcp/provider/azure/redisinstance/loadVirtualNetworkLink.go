@@ -6,6 +6,7 @@ import (
 	"github.com/kyma-project/cloud-manager/api/cloud-control/v1beta1"
 	"github.com/kyma-project/cloud-manager/pkg/composed"
 	azuremeta "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/meta"
+	azureutil "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/util"
 	"github.com/kyma-project/cloud-manager/pkg/util"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -23,8 +24,8 @@ func loadVirtualNetworkLink(ctx context.Context, st composed.State) (error, cont
 	logger.Info("Loading Azure Private VirtualNetworkLink")
 
 	resourceGroupName := state.resourceGroupName
-	privateZoneName := "privatelink.redis.cache.windows.net"
-	virtualNetworkLinkName := "kyma-network-link"
+	privateZoneName := azureutil.GetDefaultPrivateDnsZoneName()
+	virtualNetworkLinkName := azureutil.GetDefaultVirtualNetworkLinkName()
 
 	privateVirtualNetworkLinkInstance, err := state.client.GetVirtualNetworkLink(ctx, resourceGroupName, privateZoneName, virtualNetworkLinkName)
 	if err != nil {

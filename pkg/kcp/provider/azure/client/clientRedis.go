@@ -22,8 +22,10 @@ type RedisClient interface {
 	GetPrivateDnsZoneGroup(ctx context.Context, resourceGroupName, privateEndPointName, privateDnsZoneGroupName string) (*armnetwork.PrivateDNSZoneGroup, error)
 	CreatePrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneName string, parameters armprivatedns.PrivateZone) error
 	GetPrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneGroupName string) (*armprivatedns.PrivateZone, error)
+	DeletePrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneGroupName string) error
 	CreateVirtualNetworkLink(ctx context.Context, resourceGroupName, privateZoneName, virtualNetworkLinkName string, parameters armprivatedns.VirtualNetworkLink) error
 	GetVirtualNetworkLink(ctx context.Context, resourceGroupName, privateZoneName, virtualNetworkLinkName string) (*armprivatedns.VirtualNetworkLink, error)
+	DeleteVirtualNetworkLink(ctx context.Context, resourceGroupName, privateZoneName, virtualNetworkLinkName string) error
 }
 
 func NewRedisClient(svc *armredis.Client, pepClient *armnetwork.PrivateEndpointsClient, dnsZoneGroupClient *armnetwork.PrivateDNSZoneGroupsClient,
@@ -211,6 +213,19 @@ func (c *redisClient) GetPrivateDnsZone(ctx context.Context, resourceGroupName, 
 	return &privateDnsZoneClientGetResponse.PrivateZone, nil
 }
 
+func (c *redisClient) DeletePrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneGroupName string) error {
+	_, err := c.dnsZoneClient.BeginDelete(
+		ctx,
+		resourceGroupName,
+		privateDnsZoneGroupName,
+		nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
 func (c *redisClient) CreateVirtualNetworkLink(ctx context.Context, resourceGroupName, privateZoneName, virtualNetworkLinkName string, parameters armprivatedns.VirtualNetworkLink) error {
 	_, err := c.virtualNetworkLinkClient.BeginCreateOrUpdate(
 		ctx,
@@ -238,4 +253,18 @@ func (c *redisClient) GetVirtualNetworkLink(ctx context.Context, resourceGroupNa
 	}
 
 	return &virtualNetworkLinkClientGetResponse.VirtualNetworkLink, nil
+}
+
+func (c *redisClient) DeleteVirtualNetworkLink(ctx context.Context, resourceGroupName, privateZoneName, virtualNetworkLinkName string) error {
+	_, err := c.virtualNetworkLinkClient.BeginDelete(
+		ctx,
+		resourceGroupName,
+		privateZoneName,
+		virtualNetworkLinkName,
+		nil)
+	if err != nil {
+		return err
+	}
+
+	return nil
 }

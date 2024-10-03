@@ -7,6 +7,7 @@ import (
 	"github.com/Azure/azure-sdk-for-go/sdk/resourcemanager/privatedns/armprivatedns"
 	"github.com/kyma-project/cloud-manager/api/cloud-control/v1beta1"
 	"github.com/kyma-project/cloud-manager/pkg/composed"
+	azureutil "github.com/kyma-project/cloud-manager/pkg/kcp/provider/azure/util"
 	"github.com/kyma-project/cloud-manager/pkg/util"
 	"k8s.io/apimachinery/pkg/api/meta"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
@@ -22,8 +23,7 @@ func createPrivateDnsZone(ctx context.Context, st composed.State) (error, contex
 
 	logger.Info("Creating Azure Private DnsZone")
 	resourceGroupName := state.resourceGroupName
-	// https://learn.microsoft.com/en-us/azure/private-link/private-endpoint-dns#databases
-	privateDnsZoneName := "privatelink.redis.cache.windows.net"
+	privateDnsZoneName := azureutil.GetDefaultPrivateDnsZoneName()
 
 	privateDNSZone := armprivatedns.PrivateZone{
 		Location: to.Ptr("global"),

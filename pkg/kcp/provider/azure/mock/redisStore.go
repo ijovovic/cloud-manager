@@ -278,3 +278,11 @@ func (s *redisStore) DeletePrivateDnsZoneGroup(ctx context.Context, resourceGrou
 func (s *redisStore) DeletePrivateEndPoint(ctx context.Context, resourceGroupName, privateEndPointName string) error {
 	return nil
 }
+
+func (s *redisStore) DeletePrivateDnsZone(ctx context.Context, resourceGroupName, privateDnsZoneGroupName string) error {
+	return nil
+}
+
+func (s *redisStore) DeleteVirtualNetworkLink(ctx context.Context, resourceGroupName, privateZoneName, virtualNetworkLinkName string) error {
+	return nil
+}

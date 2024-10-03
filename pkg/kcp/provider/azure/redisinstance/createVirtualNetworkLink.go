@@ -23,8 +23,8 @@ func createVirtualNetworkLink(ctx context.Context, st composed.State) (error, co
 
 	logger.Info("Creating Azure Private VirtualNetworkLink")
 	resourceGroupName := state.resourceGroupName
-	privateDnsZoneName := "privatelink.redis.cache.windows.net"
-	virtualNetworkLinkName := "kyma-network-link"
+	privateDnsZoneName := azureutil.GetDefaultPrivateDnsZoneName()
+	virtualNetworkLinkName := azureutil.GetDefaultVirtualNetworkLinkName()
 	kymaNetworkName := state.Scope().Spec.Scope.Azure.VpcNetwork
 
 	virtualNetworkLink := armprivatedns.VirtualNetworkLink{
