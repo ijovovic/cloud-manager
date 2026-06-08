@@ -82,7 +82,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 
 	ctx.Step(`^eventually timeout is "([^"]*)"$`, eventuallyTimeoutIs)
 
-	ctx.Step(`^there is shared SKR with "(AWS|Azure|GCP|OpenStack)" provider$`, thereIsSharedSKRWithProvider)
+	ctx.Step(`^there is shared SKR with "(AWS|Azure|GCP|OpenStack|Alicloud)" provider$`, thereIsSharedSKRWithProvider)
 
 	ctx.Step(`^module "([^"]*)" is active`, moduleIsActive)
 	ctx.Step(`^module "([^"]*)" is active`, moduleIsNotActive)
@@ -105,7 +105,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	ctx.Step(`^tf module "([^"]*)" is applied:$`, tfModuleIsApplied)
 	ctx.Step(`^tf module "([^"]*)" is destroyed$`, tfModuleIsDestroyed)
 	ctx.Step(`^current cluster is "([^"]*)"$`, currentClusterIs)
-	ctx.Step(`^Subscription "([^"]+)" exists for "(AWS|Azure|GCP|OpenStack)" provider$`, subscriptionExistsForProvider)
+	ctx.Step(`^Subscription "([^"]+)" exists for "(AWS|Azure|GCP|OpenStack|Alicloud)" provider$`, subscriptionExistsForProvider)
 	ctx.Step(`^existing runtime "([^"]+)"$`, existingRuntime)
 	ctx.Step(`^strategic merge patch of resource "([^"]*)" is applied:$`, strategicMergePatchOfResourceIsApplied)
 }

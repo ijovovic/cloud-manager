@@ -13,6 +13,7 @@ var DefaultRegions = map[cloudcontrolv1beta1.ProviderType]string{
 	cloudcontrolv1beta1.ProviderGCP:       "us-east1",
 	cloudcontrolv1beta1.ProviderAzure:     "westeurope",
 	cloudcontrolv1beta1.ProviderOpenStack: "eu-de-1",
+	cloudcontrolv1beta1.ProviderAlicloud:  "cn-hangzhou",
 }
 
 const (

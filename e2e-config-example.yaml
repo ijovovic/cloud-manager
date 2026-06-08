@@ -35,6 +35,7 @@ cloudProfiles:
   azure: az
   gcp: gcp
   openstack: converged-cloud-kyma
+  alicloud: alicloud
 
 # if false then the secret gardener-credentials must not exist in KCP
 # if true then the secret gardener-credentials will be overwritten in case it exists
