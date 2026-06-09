@@ -120,6 +120,20 @@ func statusSaveOnCreate(ctx context.Context, st composed.State) (error, context.
 				TenantName: tenantName,
 			},
 		}
+
+	case cloudcontrolv1beta1.ProviderAlicloud:
+		accessKeyID, ok := state.credentialData["accessKeyID"]
+		if !ok {
+			theErr = multierror.Append(theErr, errors.New("gardener credentials for alicloud missing accessKeyID key"))
+		}
+		if theErr != nil {
+			break
+		}
+		state.ObjAsSubscription().Status.SubscriptionInfo = &cloudcontrolv1beta1.SubscriptionInfo{
+			Alicloud: &cloudcontrolv1beta1.SubscriptionInfoAlicloud{
+				AccountId: accessKeyID,
+			},
+		}
 	} // case
 
 	if theErr != nil {
