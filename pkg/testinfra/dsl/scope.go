@@ -323,6 +323,56 @@ func CreateScopeOpenStack(ctx context.Context, infra testinfra.Infra, scope *clo
 	return nil
 }
 
+func CreateScopeAlicloud(ctx context.Context, infra testinfra.Infra, scope *cloudcontrolv1beta1.Scope, accountId string, opts ...ObjAction) error {
+	if scope == nil {
+		scope = &cloudcontrolv1beta1.Scope{}
+	}
+
+	NewObjActions(opts...).
+		Append(
+			WithNamespace(DefaultKcpNamespace),
+		).
+		ApplyOnObject(scope)
+
+	project := strings.TrimPrefix(scope.Namespace, "garden-")
+
+	scope.Spec = cloudcontrolv1beta1.ScopeSpec{
+		KymaName:  scope.Name,
+		ShootName: scope.Name,
+		Region:    "cn-hangzhou",
+		Provider:  cloudcontrolv1beta1.ProviderAlicloud,
+		Scope: cloudcontrolv1beta1.ScopeInfo{
+			Alicloud: &cloudcontrolv1beta1.AlicloudScope{
+				AccountId:  accountId,
+				VpcNetwork: fmt.Sprintf("shoot--%s--%s", project, scope.Name),
+				Network: cloudcontrolv1beta1.AlicloudNetwork{
+					Nodes:    "10.250.0.0/22",
+					Pods:     "10.96.0.0/13",
+					Services: "10.104.0.0/13",
+					Zones:    []string{"cn-hangzhou-h", "cn-hangzhou-i", "cn-hangzhou-j"},
+				},
+			},
+		},
+	}
+
+	err := infra.KCP().Client().Create(ctx, scope)
+	if err != nil {
+		return err
+	}
+
+	kyma := util.NewKymaUnstructured()
+	if err := CreateKymaCR(ctx, infra, kyma,
+		WithName(scope.Name),
+		WithKymaModuleListedInSpec(),
+		WithKymaStatusModuleState(util.KymaModuleStateReady),
+		WithKymaSpecChannel("fast"),
+	); err != nil {
+		return fmt.Errorf("error creating kyma: %w", err)
+	}
+
+	return nil
+}
+
 func GivenScopeAzureExists(ctx context.Context, infra testinfra.Infra, scope *cloudcontrolv1beta1.Scope, opts ...ObjAction) error {
 
 	if scope == nil {
