@@ -79,3 +79,15 @@ func (b *SubscriptionBuilder) WithoutOpenstack() *SubscriptionBuilder {
 	b.Obj.Spec.Details.Openstack = nil
 	return b
 }
+
+func (b *SubscriptionBuilder) WithAlicloud(accountId string) *SubscriptionBuilder {
+	b.Obj.Spec.Details.Alicloud = &SubscriptionInfoAlicloud{
+		AccountId: accountId,
+	}
+	return b
+}
+
+func (b *SubscriptionBuilder) WithoutAlicloud() *SubscriptionBuilder {
+	b.Obj.Spec.Details.Alicloud = nil
+	return b
+}
